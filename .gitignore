@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE
+.vscode/
+
+# Output directories
+results_det/
+results_e2e/
+
+# OS
+.DS_Store
+Thumbs.db
