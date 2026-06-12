@@ -1,0 +1,17 @@
+# === 最小推理依赖（仅 ONNX Runtime 推理）===
+numpy>=1.19.0
+opencv-python>=4.1.0
+onnxruntime>=1.7.0
+pyclipper>=1.2.1
+shapely>=1.7.0
+pyyaml>=5.4.0
+
+# === 可选：GPU 推理 ===
+# 如需 GPU 推理，将 onnxruntime 替换为 onnxruntime-gpu
+# onnxruntime-gpu>=1.7.0
+
+# === 可选：HTTP 服务 ===
+# FastAPI + uvicorn 用于部署 REST API
+# fastapi>=0.100.0
+# uvicorn[standard]>=0.23.0
+# python-multipart>=0.0.6
