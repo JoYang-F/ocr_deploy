@@ -13,6 +13,11 @@ results/
 
 # Model files (large ONNX, download from Release)
 models/*.onnx
+models.tar.gz
+models.zip
+
+# Docs
+deploy.md
 
 # OS
 .DS_Store
