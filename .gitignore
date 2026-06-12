@@ -9,6 +9,7 @@ __pycache__/
 # Output directories
 results_det/
 results_e2e/
+results/
 
 # OS
 .DS_Store
