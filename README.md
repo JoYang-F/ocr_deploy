@@ -134,7 +134,7 @@ models/
 └── num_chars_38.json      ← 字符映射表
 ```
 
-> 模型导出方法参见 [deploy.md](deploy.md) 或训练项目中的 `export.py`。
+> 模型导出方法参见训练项目中的 `export.py`。
 
 ### 3. 配置
 
@@ -369,7 +369,6 @@ deploy/
 ├── config.yml               推理配置文件
 ├── requirements.txt         依赖清单
 │
-├── deploy.md                详细部署指南（含 Docker、性能调优等）
 ├── README.md                本文件
 │
 ├── test/                    测试图像目录
@@ -431,8 +430,6 @@ python inference.py -c config.yml -i test.jpg
 
 > 目标机器**完全不需要 PyTorch**，也无需训练代码和数据集。
 
-详细部署步骤、Docker 容器化等参见 [deploy.md](deploy.md)。
-
 ---
 
 ## 常见问题
@@ -447,7 +444,7 @@ ls models/
 # DBNet_res34.onnx  CRNN_res18.onnx  num_chars_38.json
 ```
 
-模型导出需在训练环境中执行 `export.py`，参见 [deploy.md](deploy.md)。
+模型导出需在训练环境中执行 `export.py`。
 </details>
 
 <details>
@@ -507,7 +504,6 @@ uvicorn ocr_service:app --workers 2
 
 ## 相关资源
 
-- [详细部署指南](deploy.md) — 模型导出、Docker、GPU 加速、性能调优
 - [DBNet 论文](https://arxiv.org/abs/1911.08947) — Real-time Scene Text Detection with Differentiable Binarization
 - [CRNN 论文](https://arxiv.org/abs/1507.05717) — An End-to-End Trainable Neural Network for Image-based Sequence Recognition
 
