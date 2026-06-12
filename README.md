@@ -1,8 +1,38 @@
-# OCR 推理部署包
+<div align="center">
 
-> 基于 **DBNet + CRNN** 的端到端 OCR 推理引擎，使用 **ONNX Runtime** 加速，**无需 PyTorch**，轻量高效。
+# 📄 OCR 推理部署包
+
+**基于 DBNet + CRNN 的端到端 OCR 推理引擎**
+
+[![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![ONNX Runtime](https://img.shields.io/badge/onnxruntime-%3E%3D1.7.0-orange.svg)](https://github.com/microsoft/onnxruntime)
+[![Code size](https://img.shields.io/github/languages/code-size/JoYang-F/ocr_deploy)](https://github.com/JoYang-F/ocr_deploy)
+[![Last Commit](https://img.shields.io/github/last-commit/JoYang-F/ocr_deploy)](https://github.com/JoYang-F/ocr_deploy)
+
+<br>
+
+> 🚀 **纯 ONNX Runtime 推理 · 无需 PyTorch · 轻量高效**
+>
+> 将训练好的 DBNet（文本检测）和 CRNN（文本识别）模型一键部署到任意环境。  
+> 支持 **CLI 命令行**、**Python API**、**HTTP 服务** 三种使用方式。
 
 ---
+
+## ✨ 特性一览
+
+| 特性 | 说明 |
+|------|------|
+| ⚡ **轻量部署** | 纯 ONNX Runtime 推理，无需 PyTorch，依赖仅 ~100MB |
+| 🖥️ **跨平台** | 支持 Windows / Linux / macOS，CPU 和 GPU（CUDA / TensorRT） |
+| 🎯 **端到端管线** | DBNet 检测 → 透视裁剪 → CRNN 识别，一站式输出 |
+| 📦 **三种使用方式** | CLI / Python API / HTTP 服务（FastAPI）任选 |
+| 🔧 **灵活配置** | 支持 YAML 配置文件或直接传参，阈值 / 尺寸均可调 |
+| 🐳 **容器化部署** | 提供 Dockerfile，一键构建镜像 |
+
+---
+
+## 🧠 技术架构
 
 ## 项目架构
 
@@ -39,17 +69,6 @@
 ```
 
 **核心管线：** 输入 BGR 图像 → [DBNet 检测文本框] → [逐框透视裁剪] → [CRNN 识别文字] → [{bbox, text, score}, ...]
-
----
-
-## 特性
-
-- ⚡ **纯 ONNX Runtime 推理** — 无需 PyTorch，依赖仅 ~100MB
-- 🖥️ **跨平台** — Windows / Linux / macOS，支持 CPU 和 GPU（CUDA / TensorRT）
-- 🎯 **端到端管线** — 检测 + 识别一站式，也可独立使用
-- 📦 **三种使用方式** — CLI / Python API / HTTP 服务（FastAPI）
-- 🔧 **高度可配置** — 阈值、长边尺寸、膨胀系数等均可调
-- 🐳 **Docker 支持** — 一键容器化部署
 
 ---
 
@@ -496,4 +515,6 @@ uvicorn ocr_service:app --workers 2
 
 ## License
 
-MIT
+本项目基于 [MIT License](LICENSE) 开源，可以自由使用、修改、商用。
+
+Copyright (c) 2024 JoYang-F
