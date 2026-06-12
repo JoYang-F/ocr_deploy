@@ -92,7 +92,21 @@ pip install fastapi uvicorn python-multipart
 
 ### 2. 准备模型
 
-将导出的 ONNX 模型放入 `models/` 目录：
+ONNX 模型文件较大（~200MB），未直接包含在仓库中。
+
+**方式一：从 Release 下载（推荐）**
+
+前往 [Releases](https://github.com/JoYang-F/ocr_deploy/releases) 页面下载最新的模型包，解压到 `models/` 目录：
+
+```bash
+# 示例：下载 v1.0 版本的模型
+curl -L -o models.zip https://github.com/JoYang-F/ocr_deploy/releases/download/v1.0/models.zip
+unzip models.zip -d models/
+```
+
+**方式二：自行导出**
+
+如果有训练环境，使用 `export.py` 导出 ONNX 模型放入 `models/` 目录：
 
 ```
 models/

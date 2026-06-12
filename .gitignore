@@ -11,6 +11,9 @@ results_det/
 results_e2e/
 results/
 
+# Model files (large ONNX, download from Release)
+models/*.onnx
+
 # OS
 .DS_Store
 Thumbs.db
