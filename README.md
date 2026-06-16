@@ -349,10 +349,36 @@ result:
 
 ---
 
+## 🔌 工业相机采集
+
+`camera.py` 支持海康彩色工业相机实时预览与图像采集：
+
+```bash
+python camera.py
+```
+
+| 按键 | 功能 |
+|------|------|
+| `s` | 单张抓取，保存到 `./captures/` |
+| `空格` | 切换自动连续保存模式 |
+| `q` | 退出 |
+
+采集的图片可直接用于 OCR 推理：
+
+```bash
+python inference.py -c config.yml -i ./captures/
+```
+
+> ⚠️ **依赖说明：** `camera.py` 依赖海康 MVS（Machine Vision Software）SDK。  
+> SDK 文件（`MvImport/`）未包含在仓库中，请从 [海康机器人官网](https://www.hikrobotics.com/machinevision) 下载安装，  
+> 然后将 SDK 中的 `MvImport/` 目录复制到本项目根目录即可运行。
+
+---
+
 ## 项目结构
 
 ```
-deploy/
+ocr_deploy/
 ├── models/                  ← ONNX 模型 + 字符映射表
 │   ├── DBNet_res34.onnx
 │   ├── CRNN_res18.onnx
@@ -362,6 +388,7 @@ deploy/
 ├── det_inference.py         ★ 文本检测推理（DBNet）
 ├── rec_inference.py         ★ 文本识别推理（CRNN）
 ├── ocr_service.py           ★ FastAPI HTTP 服务
+├── camera.py                ★ 海康工业相机图像采集工具
 │
 ├── preprocess.py            图像预处理（检测 + 识别）
 ├── postprocess.py           后处理（DB 文本框提取 + CTC 解码 + 字符映射）
@@ -369,12 +396,14 @@ deploy/
 ├── config.yml               推理配置文件
 ├── requirements.txt         依赖清单
 │
-├── deploy.md                详细部署指南（含 Docker、性能调优等）
 ├── README.md                本文件
 │
 ├── test/                    测试图像目录
 ├── results_det/             检测结果输出目录
 ├── results_e2e/             端到端结果输出目录
+├── captures/                相机采集图像目录
+│
+├── MvImport/                ← 海康 MVS SDK Python 封装（需自行下载，已 gitignore）
 └── .vscode/                 VS Code 配置（调试等）
 ```
 
