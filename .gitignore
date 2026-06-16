@@ -19,6 +19,10 @@ models.zip
 # Docs
 deploy.md
 
+# Hikvision MVS SDK (需自行从海康官网下载)
+MvImport/
+camera.py
+
 # OS
 .DS_Store
 Thumbs.db
