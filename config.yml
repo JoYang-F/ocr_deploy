@@ -12,11 +12,11 @@ input:
   # 图像目录或单张图像路径（也可通过 CLI: -i <path> 覆盖）
   # 注意：部署前必须修改为实际路径！
   image_dir_or_path: ./test
-  mode: e2e                                        # e2e / det / rec
+  mode: e2e                                 # e2e / det / rec
 
 # --- 文本检测模型 ---
 det:
-  model_path: ./models/DBNet_res34.onnx              # ONNX 检测模型路径
+  model_path: ./models/DBNet_mobilev3.onnx              # ONNX 检测模型路径
   long_size: 960                                     # 推理时图片长边尺寸
   thresh: 0.3                                        # 概率图二值化阈值
   box_thresh: 0.6                                    # 文本框置信度阈值
@@ -25,7 +25,7 @@ det:
 
 # --- 文本识别模型 ---
 rec:
-  model_path: ./models/CRNN_res18.onnx                     # ONNX 识别模型路径
+  model_path: ./models/CRNN_mobilev3.onnx                     # ONNX 识别模型路径
   char_json_path: ./models/num_chars_38.json         # 字符映射表
   image_shape: [3, 32, 320]                          # 识别输入尺寸 [C, H, max_W]
 
