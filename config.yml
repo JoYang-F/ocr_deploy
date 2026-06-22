@@ -4,14 +4,12 @@
 # 使用方式：
 #   python inference.py -c config.yml                # 使用下方 input 指定的路径
 #   python inference.py -c config.yml -i ./my_imgs/  # CLI 参数覆盖配置
-#   python det_inference.py -c config.yml            # 仅检测
-#   python rec_inference.py -c config.yml            # 仅识别
 
 # --- 输入 ---
 input:
   # 图像目录或单张图像路径（也可通过 CLI: -i <path> 覆盖）
   # 注意：部署前必须修改为实际路径！
-  image_dir_or_path: ./test
+  image_dir_or_path: ./captures
   mode: e2e                                 # e2e / det / rec
 
 # --- 文本检测模型 ---
@@ -19,17 +17,25 @@ det:
   model_path: ./models/DBNet_mobilev3.onnx              # ONNX 检测模型路径
   long_size: 960                                     # 推理时图片长边尺寸
   thresh: 0.3                                        # 概率图二值化阈值
-  box_thresh: 0.6                                    # 文本框置信度阈值
+  box_thresh: 0.7                                    # 文本框置信度阈值
   max_candidates: 1000                               # 最大候选框数
   unclip_ratio: 1.6                                  # 文本框膨胀比例
 
 # --- 文本识别模型 ---
 rec:
   model_path: ./models/CRNN_mobilev3.onnx                     # ONNX 识别模型路径
-  char_json_path: ./models/num_chars_38.json         # 字符映射表
+  char_json_path: ./models/num_chars_11.json         # 字符映射表
   image_shape: [3, 32, 320]                          # 识别输入尺寸 [C, H, max_W]
 
 # --- 结果输出 ---
 result:
   #save_dir: ./e2e_results                                # 结果保存目录
   visualize: true                                    # 是否保存可视化图像
+
+# --- 相机实时采集 ---
+capture:
+  save_dir: ./captures_ocr      # 检出文本时自动保存目录
+  jpeg_quality: 95              # 保存图片 JPEG 质量 (1-100)
+  preview_scale: 0.5            # 预览窗口缩放比例
+  auto_save: true               # 检出文本时自动保存图片
+  display_scale: 0.5            # 预览缩放（CLI --display-scale 可覆盖）

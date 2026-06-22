@@ -5,6 +5,7 @@ __pycache__/
 
 # IDE
 .vscode/
+.idea/
 
 # Output directories
 results_det/
