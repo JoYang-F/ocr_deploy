@@ -15,26 +15,26 @@
 > 🚀 **纯 ONNX Runtime 推理 · 无需 PyTorch · 轻量高效**
 >
 > 将训练好的 DBNet（文本检测）和 CRNN（文本识别）模型一键部署到任意环境。  
-> 支持 **CLI 命令行**、**Python API**、**HTTP 服务** 三种使用方式。
+> 支持 **CLI 命令行** 和 **Python API** 两种使用方式，配合 `camera_ocr.py` 可实时 OCR。
 
 </div>
 
----## ✨ 特性一览
+---
+
+## ✨ 特性一览
 
 | 特性 | 说明 |
 |------|------|
 | ⚡ **轻量部署** | 纯 ONNX Runtime 推理，无需 PyTorch，依赖仅 ~100MB |
 | 🖥️ **跨平台** | 支持 Windows / Linux / macOS，CPU 和 GPU（CUDA / TensorRT） |
 | 🎯 **端到端管线** | DBNet 检测 → 透视裁剪 → CRNN 识别，一站式输出 |
-| 📦 **三种使用方式** | CLI / Python API / HTTP 服务（FastAPI）任选 |
+| 📦 **两种使用方式** | CLI 命令行 / Python API 任选 |
 | 🔧 **灵活配置** | 支持 YAML 配置文件或直接传参，阈值 / 尺寸均可调 |
-| 🐳 **容器化部署** | 提供 Dockerfile，一键构建镜像 |
+| 📷 **工业相机** | 海康相机采集 + 实时 OCR，双线程架构 |
 
 ---
 
 ## 🧠 技术架构
-
-## 项目架构
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -103,12 +103,6 @@ pip uninstall onnxruntime
 pip install onnxruntime-gpu
 ```
 
-#### 可选：HTTP 服务
-
-```bash
-pip install fastapi uvicorn python-multipart
-```
-
 ### 2. 准备模型
 
 ONNX 模型文件较大（~200MB），未直接包含在仓库中。
@@ -131,7 +125,7 @@ unzip models.zip -d models/
 models/
 ├── DBNet_res34.onnx       ← 检测模型（DBNet）
 ├── CRNN_res18.onnx        ← 识别模型（CRNN）
-└── num_chars_38.json      ← 字符映射表
+└── num_chars_11.json      ← 字符映射表
 ```
 
 > 模型导出方法参见 [deploy.md](deploy.md) 或训练项目中的 `export.py`。
@@ -190,7 +184,7 @@ python det_inference.py -m ./models/DBNet_res34.onnx -i test.jpg -o ./out
 
 ```bash
 python rec_inference.py -c config.yml                                              # 配置文件
-python rec_inference.py -m ./models/CRNN_res18.onnx --char-json ./models/num_chars_38.json -i crop.jpg
+python rec_inference.py -m ./models/CRNN_res18.onnx --char-json ./models/num_chars_11.json -i crop.jpg
 ```
 
 所有 CLI 都会输出详细日志并自动汇总统计信息（总用时、平均置信度等）。
@@ -211,7 +205,7 @@ from inference import create_ocr
 ocr = create_ocr(
     det_model="./models/DBNet_res34.onnx",
     rec_model="./models/CRNN_res18.onnx",
-    char_json="./models/num_chars_38.json",
+    char_json="./models/num_chars_11.json",
 )
 
 # 推理
@@ -254,66 +248,6 @@ text, score = rec.predict_file("crop.jpg")
 results = rec.predict_batch([crop1, crop2])
 ```
 
-### 🌐 HTTP 服务（FastAPI）
-
-#### 启动
-
-```bash
-# 开发模式
-python ocr_service.py
-
-# 生产模式（多 worker）
-uvicorn ocr_service:app --host 0.0.0.0 --port 8000 --workers 4
-
-# 或指定配置文件
-OCR_CONFIG=config.yml uvicorn ocr_service:app --host 0.0.0.0 --port 8000
-```
-
-#### API 端点
-
-| 端点 | 方法 | 说明 |
-|------|------|------|
-| `/predict` | POST | 端到端 OCR（检测 + 识别） |
-| `/predict_batch` | POST | 批量 OCR |
-| `/detect` | POST | 仅文本检测 |
-| `/recognize` | POST | 仅文本识别 |
-| `/health` | GET | 健康检查 |
-| `/info` | GET | 模型配置信息 |
-
-#### 调用示例
-
-```bash
-# 端到端 OCR
-curl -X POST http://localhost:8000/predict -F "file=@test.jpg"
-
-# 仅检测
-curl -X POST http://localhost:8000/detect -F "file=@test.jpg"
-
-# 仅识别
-curl -X POST http://localhost:8000/recognize -F "file=@crop.jpg"
-
-# 健康检查
-curl http://localhost:8000/health
-```
-
-**响应格式：**
-
-```json
-{
-  "results": [
-    {
-      "bbox": [[10, 20], [100, 20], [100, 50], [10, 50]],
-      "text": "AB123",
-      "score": 0.953
-    }
-  ],
-  "elapsed_ms": 245.3,
-  "image_id": "test.jpg"
-}
-```
-
-浏览器打开 `http://localhost:8000/docs` 查看交互式 Swagger API 文档。
-
 ---
 
 ## 配置文件说明
@@ -338,7 +272,7 @@ det:
 # --- 文本识别模型 (CRNN) ---
 rec:
   model_path: ./models/CRNN_res18.onnx      # ONNX 识别模型路径
-  char_json_path: ./models/num_chars_38.json # 字符映射表 JSON
+  char_json_path: ./models/num_chars_11.json # 字符映射表 JSON
   image_shape: [3, 32, 320]                 # 识别输入尺寸 [C, H, max_W]
 
 # --- 结果输出 ---
@@ -351,7 +285,12 @@ result:
 
 ## 🔌 工业相机采集
 
-`camera.py` 支持海康彩色工业相机实时预览与图像采集：
+| 工具 | 说明 |
+|------|------|
+| `camera.py` | 相机画面实时预览 + 手动/自动抓取保存图像 |
+| `camera_ocr.py` | 实时采集 + OCR 检测识别 + 可视化显示（双线程） |
+
+### camera.py — 图像采集
 
 ```bash
 python camera.py
@@ -363,21 +302,28 @@ python camera.py
 | `空格` | 切换自动连续保存模式 |
 | `q` | 退出 |
 
-采集的图片可直接用于 OCR 推理：
+采集的图片可离线进行 OCR 推理：
 
 ```bash
 python inference.py -c config.yml -i ./captures/
 ```
 
-> ⚠️ **依赖说明：** `camera.py` 依赖海康 MVS（Machine Vision Software）SDK。  
-> SDK 文件（`MvImport/`）未包含在仓库中，请从 [海康机器人官网](https://www.hikrobotics.com/machinevision) 下载安装，  
-> 然后将 SDK 中的 `MvImport/` 目录复制到本项目根目录即可运行。
+### camera_ocr.py — 实时 OCR
 
----
+```bash
+python camera_ocr.py -c config.yml
+```
 
----
+| 按键 | 功能 |
+|------|------|
+| `q` | 退出 |
+| `s` | 手动抓取当前画面及 OCR 结果 |
+| `r` | 切换 OCR 开关 |
+| `a` | 切换自动保存（检出文本时自动存图 + txt） |
 
----
+> ⚠️ **依赖说明：** 相机工具依赖海康 MVS SDK。SDK 文件（`MvImport/`）未包含在仓库中，  
+> 请从 [海康机器人官网](https://www.hikrobotics.com/machinevision) 下载安装，  
+> 然后将 `MvImport/` 目录复制到本项目根目录即可运行。
 
 ---
 
@@ -412,7 +358,7 @@ python inference.py -c config.yml -i test.jpg
 
 ```bash
 ls models/
-# DBNet_res34.onnx  CRNN_res18.onnx  num_chars_38.json
+# DBNet_res34.onnx  CRNN_res18.onnx  num_chars_11.json
 ```
 
 模型导出需在训练环境中执行 `export.py`，参见 [deploy.md](deploy.md)。
@@ -458,16 +404,6 @@ echo '{"<BLANK>":0,"A":1,"B":2, ...}' > my_chars.json
 python export.py rec --pth model.pth --output CRNN.onnx --char_json my_chars.json
 
 # 4. 更新部署目录中的 config.yml 和字符集文件
-```
-</details>
-
-<details>
-<summary><b>Q: 多 Worker 部署时内存不足</b></summary>
-
-每个 worker 会加载一份完整的模型副本。建议减少 worker 数量或使用共享内存：
-
-```bash
-uvicorn ocr_service:app --workers 2
 ```
 </details>
 
