@@ -4,7 +4,7 @@
 
 - `DBNet.onnx`   — 文本检测模型
 - `CRNN.onnx`    — 文本识别模型
-- `num_chars_38.json` — 字符映射表
+- `num_chars_11.json` — 字符映射表
 
 ## 导出模型
 
