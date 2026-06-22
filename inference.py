@@ -333,25 +333,52 @@ if __name__ == "__main__":
     # -- 仅识别 --
     if rec:
         rec = RecInference.from_config(config_path)
+
+        # 像 det 分支一样：先创建输出目录。
+        # rec 模式不保存可视化图片，而是把每张图的识别结果写入同一个 result.txt。
+        out_dir = _resolve_path(args.output or "./results_rec")
+        os.makedirs(out_dir, exist_ok=True)
+        result_txt = os.path.join(out_dir, "result.txt")
+
         total_time = 0.0
         total_score = 0.0
         total_texts = 0
-        for p in img_paths:
-            t0 = time.time()
-            text, score = rec.predict_file(p)
-            elapsed = time.time() - t0
-            total_time += elapsed
-            if text.strip():
-                total_score += score
-                total_texts += 1
-            print(f"[{os.path.basename(p)}] text={text!r}  score={score:.3f}  用时{elapsed:.3f}s")
+
+        with open(result_txt, "w", encoding="utf-8") as f:
+            for p in img_paths:
+                t0 = time.time()
+                text, score = rec.predict_file(p)
+                elapsed = time.time() - t0
+
+                score = float(score)
+                total_time += elapsed
+                if text.strip():
+                    total_score += score
+                    total_texts += 1
+
+                # 每张图片一行，包含图片路径、识别文本、置信度、耗时。
+                # 使用 JSON Lines，后续用 Python / Excel / pandas 都好读取。
+                item = {
+                    "image_path": os.path.abspath(p).replace("\\", "/"),
+                    "text": text,
+                    "score": round(score, 6),
+                    "time": round(elapsed, 6),
+                }
+                f.write(json.dumps(item, ensure_ascii=False) + "\n")
+
+                name = os.path.basename(p)
+                print(f"[{name}] text={text!r}  score={float(score):.3f}  用时{elapsed:.3f}s")
+
         # ---- 汇总统计 ----
         avg_time = total_time / len(img_paths)
         avg_score = total_score / total_texts if total_texts > 0 else 0.0
         print(f"\n{'='*50}")
         print(f" 图像数量:{len(img_paths)}  有效文本数:{total_texts}")
-        print(f" 总用时:{total_time:.3f}s   平均用时:{avg_time:.3f}s   平均置信度:{avg_score:.4f}") 
+        print(f" 总用时:{total_time:.3f}s   平均用时:{avg_time:.3f}s   平均置信度:{avg_score:.4f}")
+        print(f" 识别结果已保存至:{result_txt}")
+        print(f"{'='*50}")
         exit(0)
+
 
     # -- 端到端 --
     ocr = OCRInference(config_path)

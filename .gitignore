@@ -7,10 +7,13 @@ __pycache__/
 .vscode/
 .idea/
 
+# Data
+data/
+
 # Output directories
 results_det/
 results_e2e/
-results/
+results_rec/
 
 # Model files (large ONNX, download from Release)
 models/*.onnx

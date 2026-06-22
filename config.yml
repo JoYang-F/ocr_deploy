@@ -9,8 +9,8 @@
 input:
   # 图像目录或单张图像路径（也可通过 CLI: -i <path> 覆盖）
   # 注意：部署前必须修改为实际路径！
-  image_dir_or_path: ./captures
-  mode: e2e                                 # e2e / det / rec
+  image_dir_or_path: ./test_rec
+  mode: rec                                 # e2e / det / rec
 
 # --- 文本检测模型 ---
 det:
@@ -24,12 +24,12 @@ det:
 # --- 文本识别模型 ---
 rec:
   model_path: ./models/CRNN_mobilev3.onnx                     # ONNX 识别模型路径
-  char_json_path: ./models/num_chars_11.json         # 字符映射表
+  char_json_path: ./models/num_chars_38.json         # 字符映射表
   image_shape: [3, 32, 320]                          # 识别输入尺寸 [C, H, max_W]
 
 # --- 结果输出 ---
 result:
-  #save_dir: ./e2e_results                                # 结果保存目录
+  #save_dir: ./results_rec                                # 结果保存目录
   visualize: true                                    # 是否保存可视化图像
 
 # --- 相机实时采集 ---
