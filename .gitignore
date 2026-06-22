@@ -16,6 +16,7 @@ results/
 models/*.onnx
 models.tar.gz
 models.zip
+models/*copy*
 
 # Docs
 deploy.md
